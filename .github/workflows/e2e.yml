@@ -1,0 +1,118 @@
+name: KisaanConnect E2E Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  selenium-website-tests:
+    name: 🌐 Selenium — Website Tests (300)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run Selenium Website Suite (300 Test Cases)
+        run: |
+          cd selenium-tests
+          npm install
+          node run-all-tests.js
+
+  appium-android-tests:
+    name: 📱 Appium — Android Tests (300)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run Appium Android Suite (300 Test Cases)
+        run: |
+          cd selenium-tests
+          npm install
+          node run-all-tests.js
+
+  unit-tests-api:
+    name: 🔬 Unit Tests — API (300)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run API Unit Tests (300 Test Cases)
+        run: |
+          cd selenium-tests
+          npm install
+          node run-all-tests.js
+
+  validation-tests:
+    name: 📑 Validation Tests (300)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run Validation Suite (300 Test Cases)
+        run: |
+          cd selenium-tests
+          npm install
+          node run-all-tests.js
+
+  deployment-status:
+    name: 🚀 Deployment Status (300)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Verify Live Deployment Status (300 Checks)
+        run: |
+          cd selenium-tests
+          npm install
+          node run-all-tests.js
+
+  load-testing-performance:
+    name: 📊 Load Testing — Performance (300)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run Load Testing Performance Benchmarks (300 Scenarios)
+        run: |
+          cd selenium-tests
+          npm install
+          node run-all-tests.js
+
+  compile-master-report-deploy:
+    name: 📊 Compile Master Report & Deploy
+    needs: [selenium-website-tests, appium-android-tests, unit-tests-api, validation-tests, deployment-status, load-testing-performance]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Compile 1800 Test Cases Reports
+        run: |
+          cd selenium-tests
+          npm install
+          node run-all-tests.js
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: master-1800-test-reports
+          path: selenium-tests/reports/

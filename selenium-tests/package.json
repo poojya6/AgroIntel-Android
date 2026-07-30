@@ -1,0 +1,17 @@
+{
+  "name": "agrointel-selenium-e2e-tests",
+  "version": "1.0.0",
+  "description": "Enterprise End-to-End Test Automation Suite (Selenium, Appium, Security Audit & Load Testing)",
+  "main": "run-all-tests.js",
+  "scripts": {
+    "test": "node run-all-tests.js",
+    "test:all": "node run-all-tests.js",
+    "test:headed": "SET HEADLESS=false && node run-all-tests.js"
+  },
+  "dependencies": {
+    "chromedriver": "^122.0.0",
+    "dotenv": "^16.4.5",
+    "exceljs": "^4.4.0",
+    "selenium-webdriver": "^4.18.1"
+  }
+}

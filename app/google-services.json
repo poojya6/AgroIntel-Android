@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1056454344176",
+    "project_id": "agrointel-15ccf",
+    "storage_bucket": "agrointel-15ccf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1056454344176:android:ca0cbdba5a8fe69ddcb135",
+        "android_client_info": {
+          "package_name": "com.Simats.agrointel"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCe7XpgywdddtCkAJnBk_reYGarth7vjsA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

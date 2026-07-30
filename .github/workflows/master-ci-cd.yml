@@ -1,0 +1,132 @@
+name: Enterprise CI/CD Pipeline - E2E Testing, Security Audit & GitHub Pages Deployment
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  # -------------------------------------------------------------
+  # JOB 1: Build Android APK & Run Unit Tests
+  # -------------------------------------------------------------
+  build-android-apk:
+    name: 📱 Build Android APK & Gradle Verification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Grant Execute Permission for Gradlew
+        run: chmod +x gradlew
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: agrointel-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+
+  # -------------------------------------------------------------
+  # JOB 2: Appium Mobile E2E Automation (Android Emulator)
+  # -------------------------------------------------------------
+  appium-mobile-e2e:
+    name: 📲 Appium E2E Automation (Android Emulator)
+    needs: build-android-apk
+    runs-on: macos-latest # macOS for hardware virtualization support
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Download Built APK
+        uses: actions/download-artifact@v4
+        with:
+          name: agrointel-debug-apk
+          path: app/build/outputs/apk/debug/
+
+      - name: Set up Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Appium & Drivers
+        run: |
+          npm install -g appium
+          appium driver install uiautomator2
+
+      - name: Run Appium E2E Tests inside Android Emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 31
+          target: google_apis
+          arch: x86_64
+          script: |
+            adb install app/build/outputs/apk/debug/app-debug.apk
+            cd selenium-tests
+            npm install
+            node run-all-tests.js
+
+  # -------------------------------------------------------------
+  # JOB 3: Selenium Web E2E + Security Audit + Load Testing
+  # -------------------------------------------------------------
+  web-security-load-testing:
+    name: 🌐 Selenium E2E + Security Audit + Load Testing (100 VUs)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js & Chrome Headless
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Dependencies & Run Master Enterprise Test Suite (1,400 Test Cases)
+        run: |
+          cd selenium-tests
+          npm install
+          node run-all-tests.js
+
+      - name: Upload Master Reports (Excel .xlsx & HTML)
+        uses: actions/upload-artifact@v4
+        with:
+          name: enterprise-test-reports
+          path: selenium-tests/reports/
+
+  # -------------------------------------------------------------
+  # JOB 4: Deploy Reports to GitHub Pages
+  # -------------------------------------------------------------
+  deploy-github-pages:
+    name: 🚀 Deploy Master Audit Dashboard to GitHub Pages
+    needs: web-security-load-testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Download Test Reports
+        uses: actions/download-artifact@v4
+        with:
+          name: enterprise-test-reports
+          path: public/
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
