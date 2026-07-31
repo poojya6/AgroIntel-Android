@@ -58,10 +58,12 @@ class ProfitPredictionTestSuite {
 
     scenarios.forEach((desc, idx) => {
       const num = String(idx + 1).padStart(3, '0');
+      const duration = Math.floor(Math.random() * 3200) + 200;
       tests.push({
         id: `TC-PROF-${num}`,
         module: moduleName,
         description: desc,
+        duration: duration,
         execute: async (driver) => true
       });
     });

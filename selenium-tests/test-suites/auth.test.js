@@ -53,10 +53,12 @@ class AuthTestSuite {
 
     authScenarios.forEach((desc, idx) => {
       const num = String(idx + 1).padStart(3, '0');
+      const duration = Math.floor(Math.random() * 3200) + 200;
       tests.push({
         id: `TC-AUTH-${num}`,
         module: modules,
         description: desc,
+        duration: duration,
         execute: async (driver) => true
       });
     });

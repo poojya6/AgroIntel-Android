@@ -116,3 +116,8 @@ jobs:
         with:
           name: master-1800-test-reports
           path: selenium-tests/reports/
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./selenium-tests/reports
