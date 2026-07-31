@@ -3,6 +3,7 @@ const ExcelReporter = require('./helpers/excel-reporter');
 const HtmlReporter = require('./helpers/html-reporter');
 const config = require('./config/test-config');
 const fs = require('fs');
+const path = require('path');
 
 // Import 6 core test suites (300 test cases each = 1,800 total test cases)
 const SeleniumWebsite300 = require('./test-suites/selenium-website-300');
@@ -158,8 +159,8 @@ async function runMaster1800TestSuite() {
   });
   const csvContent = csvLines.join('\n');
   const csvTargets = [
-    'c:\\Users\\Indu\\OneDrive\\Documents\\AgroIntel\\Test_Cases.csv',
-    'c:\\Users\\Indu\\OneDrive\\Documents\\AgroIntel\\selenium-tests\\reports\\Test_Cases.csv'
+    path.join(__dirname, '..', 'Test_Cases.csv'),
+    path.join(__dirname, 'reports', 'Test_Cases.csv')
   ];
   csvTargets.forEach(tgt => {
     try {
