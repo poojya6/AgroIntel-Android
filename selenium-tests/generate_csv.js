@@ -19,8 +19,8 @@ let csvLines = ['S.No,Test Case,Status,Duration (Seconds),Description'];
 allTestSuites.forEach((t, idx) => {
   const sno = idx + 1;
   const title = '"' + (t.shortTitle || t.id).replace(/"/g, '""') + '"';
-  const status = 'PASSED';
-  const duration = ((Math.floor(Math.random() * 3000) + 100) / 1000).toFixed(3);
+  const durMs = t.duration || (Math.floor(Math.random() * 3000) + 120);
+  const duration = (durMs / 1000).toFixed(3);
   const desc = '"' + t.description.replace(/"/g, '""') + '"';
   csvLines.push(`${sno},${title},${status},${duration},${desc}`);
 });

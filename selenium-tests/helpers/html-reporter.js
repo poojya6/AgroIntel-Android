@@ -101,15 +101,18 @@ class HtmlReporter {
             <tr><th>Test ID</th><th>Module</th><th>Test Scenario Description</th><th>Status</th><th>Duration</th></tr>
           </thead>
           <tbody>
-            ${domains[dom].map(t => `
+            ${domains[dom].map(t => {
+              const durText = t.duration >= 1000 ? `${(t.duration / 1000).toFixed(3)}s` : `${t.duration}ms`;
+              return `
               <tr>
                 <td><strong>${t.id}</strong></td>
                 <td>${t.module}</td>
                 <td>${t.description}</td>
                 <td><span class="status-pass">${t.status}</span></td>
-                <td>${t.duration}ms</td>
+                <td>${durText}</td>
               </tr>
-            `).join('')}
+            `;
+            }).join('')}
           </tbody>
         </table>
       </div>
@@ -121,6 +124,11 @@ class HtmlReporter {
     const filename = `AgroIntel_1800_Test_Cases_Master_Report_${new Date().toISOString().replace(/[:.]/g, '-')}.html`;
     const filePath = path.join(config.reportsDir, filename);
     fs.writeFileSync(filePath, htmlContent, 'utf-8');
+
+    // Write index.html for GitHub Pages root deployment
+    const indexPath = path.join(config.reportsDir, 'index.html');
+    fs.writeFileSync(indexPath, htmlContent, 'utf-8');
+
     return filePath;
   }
 }

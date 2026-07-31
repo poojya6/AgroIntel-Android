@@ -91,13 +91,14 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install Dependencies & Run Master Enterprise Test Suite (1,400 Test Cases)
+      - name: Install Dependencies & Run Master Enterprise Test Suite (1,800 Test Cases)
         run: |
           cd selenium-tests
           npm install
           node run-all-tests.js
+          node generate_csv.js
 
-      - name: Upload Master Reports (Excel .xlsx & HTML)
+      - name: Upload Master Reports (Excel .xlsx, CSV & HTML)
         uses: actions/upload-artifact@v4
         with:
           name: enterprise-test-reports
@@ -120,9 +121,20 @@ jobs:
           name: enterprise-test-reports
           path: public/
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages (gh-pages branch)
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
+
+      - name: Upload Pages Artifact (Actions source)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+
+      - name: Deploy to GitHub Pages Environment
+        id: deployment
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+
 
