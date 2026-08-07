@@ -1,4 +1,4 @@
-name: Enterprise CI/CD Pipeline - E2E Testing, Security Audit & GitHub Pages Deployment
+name: Enterprise CI/CD Pipeline - E2E Testing, Security Audit & Load Testing
 
 on:
   push:
@@ -8,9 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pages: write
-  id-token: write
+  contents: read
 
 jobs:
   # -------------------------------------------------------------
@@ -103,38 +101,4 @@ jobs:
         with:
           name: enterprise-test-reports
           path: selenium-tests/reports/
-
-  # -------------------------------------------------------------
-  # JOB 4: Deploy Reports to GitHub Pages
-  # -------------------------------------------------------------
-  deploy-github-pages:
-    name: 🚀 Deploy Master Audit Dashboard to GitHub Pages
-    needs: web-security-load-testing
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code Repository
-        uses: actions/checkout@v4
-
-      - name: Download Test Reports
-        uses: actions/download-artifact@v4
-        with:
-          name: enterprise-test-reports
-          path: public/
-
-      - name: Deploy to GitHub Pages (gh-pages branch)
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
-
-      - name: Upload Pages Artifact (Actions source)
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./public
-
-      - name: Deploy to GitHub Pages Environment
-        id: deployment
-        uses: actions/deploy-pages@v4
-        continue-on-error: true
-
-
+          retention-days: 30

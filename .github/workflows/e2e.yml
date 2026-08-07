@@ -8,9 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pages: write
-  id-token: write
+  contents: read
 
 jobs:
   selenium-website-tests:
@@ -97,8 +95,8 @@ jobs:
           npm install
           node run-all-tests.js
 
-  compile-master-report-deploy:
-    name: 📊 Compile Master Report & Deploy
+  compile-master-report:
+    name: 📊 Compile Master Report
     needs: [selenium-website-tests, appium-android-tests, unit-tests-api, validation-tests, deployment-status, load-testing-performance]
     runs-on: ubuntu-latest
     steps:
@@ -116,8 +114,4 @@ jobs:
         with:
           name: master-1800-test-reports
           path: selenium-tests/reports/
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./selenium-tests/reports
+          retention-days: 30
